@@ -1,0 +1,103 @@
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.opensdf
+*.sdf
+*.vssscc
+*.bak
+*.log
+*.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+*.dll
+*.exe
+*.pdb
+*.tmp
+*.user
+*.vshost.*
+*.vspscc
+*.scc
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+*.dacpac
+*.publish.xml
+
+# Packages
+**/packages/
+**/node_modules/
+.nuget/
+project.lock.json
+project.assets.json
+*.nupkg
+*.snupkg
+packages.config
+npm-debug.log
+
+# Generated files
+_ReSharper*/
+*.dotCover
+*.resharper
+*.userprefs
+TestResults/
+*.trx
+*.vsct
+*.vsix
+*.webtest
+*.e2e.json
+*.ncrunchproject
+*.csproj.user
+*.sln.docstates
+
+# Local settings
+appsettings.Development.json
+appsettings.json
+appsettings.Production.json
+appsettings.*.json
+# Manter os appsettings na pasta para git mas ignorar suas modificações locais.
+# Se você planeja versionar o conteúdo dos appsettings, remova as linhas acima que os ignoram.
+# Normalmente, as senhas e configs de produção ficam em variáveis de ambiente,
+# mas o appsettings.json pode ter configs default ou de dev.
+# Neste caso, estou mantendo-os, mas você pode adicionar *.user para ignorar configurações locais.
+
+# Docker
+Dockerfile.orig
+*.dockerignore
+
+# Mac
+.DS_Store
+
+# Linux
+*~
+*.log
+*.pid
+*.seed
+*.sock
+*.swp
+.cache/
+.config/
+.local/
+
+# Rider
+.idea/
+
+# Temp files
+*.temp
+*.tmp
+*.bak
+*~
