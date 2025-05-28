@@ -1,3 +1,4 @@
+// Models/Pedido.cs
 using System;
 using System.Collections.Generic;
 
@@ -17,8 +18,13 @@ namespace OrganizaCaixas.Models
 
     public class ProdutoComQuantidade
     {
-        public Produto ?produto { get; set; }
+        public Produto Produto { get; set; }
         public int Quantidade { get; set; }
-        
+
+        public ProdutoComQuantidade(Produto produto, int quantidade)
+        {
+            Produto = produto;
+            Quantidade = quantidade;
+        }
     }
 }
