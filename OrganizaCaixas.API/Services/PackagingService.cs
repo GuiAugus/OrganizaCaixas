@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace OrganizaCaixas.Services
 {
@@ -34,8 +35,20 @@ namespace OrganizaCaixas.Services
             {
                 var pedidoModel = MapearPedidoInputParaModelo(pedidoInput);
                 var caixasDoPedido = ExecutarEmpacotamento(pedidoModel);
-                resultadosPedidos.Add(MapearResultadoParaPedidoOutputDto(pedidoInput.PedidoId, caixasDoPedido));
+                var pedidoOutputDto = MapearResultadoParaPedidoOutputDto(pedidoInput.PedidoId, caixasDoPedido);
+
+                var PedidoProcessadoEntity = new PedidoProcessadoEntity
+                {
+                    PedidoIdOriginal = pedidoOutputDto.PedidoId,
+                    ResultadoCaixasJson = JsonSerializer.Serialize(pedidoOutputDto),
+                    DataProcessamento = DateTime.UtcNow
+                };
+                _dbContext.PedidosProcessados.Add(PedidoProcessadoEntity);
+
+                resultadosPedidos.Add(pedidoOutputDto);
             }
+
+            await _dbContext.SaveChangesAsync();
 
             return new PedidosWrapperOutputDto { Pedidos = resultadosPedidos };
         }
@@ -167,6 +180,36 @@ namespace OrganizaCaixas.Services
             }
 
             return outputDto;
+        }
+
+        public async Task<List<PedidoResponseOutputDto>> GetOrderHistoryAsync()
+        {
+            var entities = await _dbContext.PedidosProcessados.ToListAsync();
+
+            var results = new List<PedidoResponseOutputDto>();
+            foreach (var entity in entities)
+            {
+                var pedidoOutputDto = JsonSerializer.Deserialize<PedidoResponseOutputDto>(entity.ResultadoCaixasJson);
+                if (pedidoOutputDto != null)
+                {
+                    results.Add(pedidoOutputDto);
+                }
+            }
+            return results;
+        }
+
+        public async Task<PedidoResponseOutputDto?> GetOrderHistoryByIdAsync(int pedidoIdOriginal)
+        {
+            var entity = await _dbContext.PedidosProcessados
+                                        .FirstOrDefaultAsync(p => p.PedidoIdOriginal == pedidoIdOriginal);
+
+            if (entity == null)
+            {
+                return null; 
+            }
+
+            var pedidoOutputDto = JsonSerializer.Deserialize<PedidoResponseOutputDto>(entity.ResultadoCaixasJson);
+            return pedidoOutputDto;
         }
     }
 }

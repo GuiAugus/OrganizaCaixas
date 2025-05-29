@@ -11,6 +11,7 @@ namespace OrganizaCaixas.Data
         }
 
         public DbSet<CaixaEntity> Caixas { get; set; }
+        public DbSet<PedidoProcessadoEntity> PedidosProcessados { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
