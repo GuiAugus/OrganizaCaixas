@@ -1,6 +1,9 @@
 using OrganizaCaixas.Dtos.Input;
 using OrganizaCaixas.Dtos.Output;
 using OrganizaCaixas.Models;
+using OrganizaCaixas.Data; 
+using OrganizaCaixas.Data.Entities; 
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +13,16 @@ namespace OrganizaCaixas.Services
 {
     public class PackagingService : IPackagingService
     {
-        private static readonly List<Caixa> _caixasDisponiveis = new List<Caixa>
+        private readonly ApplicationDbContext _dbContext;
+        private readonly List<Caixa> _caixasDisponiveisCache;
+
+        public PackagingService(ApplicationDbContext dbContext)
         {
-            new Caixa("Caixa 1", 30, 40, 80),
-            new Caixa("Caixa 2", 80, 50, 40),
-            new Caixa("Caixa 3", 50, 80, 60)
-        };
+            _dbContext = dbContext;
+            _caixasDisponiveisCache = _dbContext.Caixas
+                                        .Select(ce => new Caixa(ce.NomeCaixa!, ce.Altura, ce.Largura, ce.Comprimento))
+                                        .ToList();
+        }
 
         public async Task<PedidosWrapperOutputDto> ProcessarPedidosAsync(PedidosWrapperInputDto pedidosWrapperInput)
         {
@@ -81,7 +88,7 @@ namespace OrganizaCaixas.Services
                 {
                     Caixa? caixaBaseAdequada = null;
 
-                    foreach (var caixaTipo in _caixasDisponiveis.OrderBy(c => c.Volume))
+                    foreach (var caixaTipo in _caixasDisponiveisCache.OrderBy(c => c.Volume))
                     {
                         if (ProdutoCabeNaCaixa(produtoParaEmbalar, caixaTipo))
                         {
